@@ -1,0 +1,55 @@
+some MoneyWorks scripts ive done to enhance MoneyWorks for how we use it here.
+
+
+
+
+constant meta = "Script by JLZ to take a quote as a template and fill it into the sales order form. http://zentvelds.com.au"
+//
+//  designed to copy a template order for a customer into the open sales order screen. 
+//  create a quote with the usual items they order. Quantities are set to zero in the new sales order.
+// put the quote number in Name.custom5 field for the customer card. The quote can be the same for many customers. Its not per customer.
+// when the loadtemplate button is pressed it will copy the line items from the quote and insert them into the sales order table.
+//
+// V1.0  JLZ 230310
+
+
+on loadtemplate(windowRef)
+	// do some basic checks that things are correct 
+	let loop = 0
+	let CUSTID = GetFieldValue(windowRef,"E_NAME")
+	let template_id = lookup(GetFieldValue(windowRef,"E_NAME"),"Name.custom5")
+	if template_id = ""
+	     let r = alert("No Quote number to copy from")
+	     return
+	endif
+	let sequence_number = find ( "transaction.SequenceNumber","type = `QU` and OurRef = template_id")
+	if sequence_number = ""
+	     let r = alert("No Quote with number " +template_id + " found")
+	     return
+	endif	
+	//syslog(  "CUSTID : "+ custid)
+	//syslog(  "sequence number : "+ sequence_number)
+	//syslog(  "template id : "+ template_id)
+	// get the list handle
+	let listRef = GetListHandle(WindowRef, "All Order Lines")
+	//syslog( " List handle  "+listRef)
+	
+	foreach rec in Detail CreateSelection("Detail","Detail.ParentSeq =sequence_number and Detail.TransactionType=`QU`")
+		//syslog("record #" + rec + ": " + rec.Detail.OrderQty + " " + rec.Detail.stockcode )
+		// load the order table
+		SetListField(listRef,loop,"Item",rec.Detail.stockcode)
+		SetListField(listRef,loop,"Order","0")
+		addlistline(listRef)
+		let loop = loop + 1
+	endfor
+
+end
+
+
+on Before:F_TRANS(windowRef)
+	InstallToolbarIcon(windowRef, "loadtemplate")
+   // InstallMenuCommand("load template", "loadtemplate")
+end
+
+
+----------
