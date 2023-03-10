@@ -53,3 +53,31 @@ end
 
 
 ----------
+
+
+constant meta = "by JLZ. 26/8/20  default payment method to credit if possible. http://www.zentvelds.com.au"
+/*
+  change the payment method to credit if possible rather than default to last payment method.
+  
+*/
+
+on Before:F_PROCESS_SO(windowRef)
+	setfieldvalue(WindowRef,"R_DI","1")	
+end
+
+----------------
+
+constant meta = "Script by JLZ 210819 get the default shipping method and populate freight field in sales order"
+
+
+// will only be called for transaction leaving  sales order screen (F_TRANS ) and a populated customer name (E_NAME)
+//
+on ValidateField:f_trans:e_name(mywindowRef)
+let freightvalue = GetFieldValue(mywindowRef,"E_FREIGHT")  // dont change the value back to default if already changed/updated by hand
+if freightvalue = ""
+	setfieldvalue(mywindowRef,"E_FREIGHT",lookup(GetFieldValue(mywindowRef,"E_NAME"), "Name.category1"))
+endif
+return 1
+end
+
+--------
