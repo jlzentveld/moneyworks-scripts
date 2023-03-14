@@ -1,4 +1,4 @@
-some MoneyWorks scripts ive done to enhance MoneyWorks for how we use it here.
+Some MoneyWorks scripts ive done to enhance Cognito's MoneyWorks for how we use it here.  2023 03 15
 
 
 
@@ -81,3 +81,17 @@ return 1
 end
 
 --------
+
+
+to be added yet :-
+
+python program based on Ari's excelent moneyworks api https://github.com/ari/moneyworks-cli  --
+Via a cron job we find all posted invoices for the day and email a copy to nominated email address. ( this address is gotten using the excelent
+MW feature of role based contacts )
+
+
+Scripts to interface with starshipit.  Sends order details to starshipit including items, weights. When the order has been packed, courier and connote details are done, we 
+can then fetch the details including the courier, freight amount & connote into the sales order.
+
+
+
